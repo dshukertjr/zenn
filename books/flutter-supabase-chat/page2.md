@@ -2,7 +2,7 @@
 title: "Supabase のプロジェクト作成"
 ---
 
-### Supabaseプロジェクトの作成
+## Supabaseプロジェクトの作成
 
 今度はSupabase側の設定に入っていきましょう。「まだSupabaseプロジェクト作ったことがないよ」という方もご心配なく！Githubアカウントさえあれば誰でも無料で簡単にプロジェクトが作れます！まずは[こちら](https://app.supabase.com/)にアクセス。
 
@@ -14,7 +14,7 @@ Githubアカウントでログインすることを促されるので緑のボ�
 
 プロジェクトのセットアップが完了したら実際に設定に入っていきましょう！
 
-### Supabase内でテーブルの作成
+## Supabase内でテーブルの作成
 
 今回のアプリで使うテーブルは以下の二つです。
 - profiles - ユーザーのプロフィールデータを保存する
@@ -34,10 +34,10 @@ create table if not exists public.profiles (
     username varchar(24) not null unique,
     created_at timestamp with time zone default timezone('utc' :: text, now()) not null,
 
-    -- username should be 3 to 24 characters long containing alphabets, numbers and underscores
+    -- ユーザー名にRegexを使って制限をかける
     constraint username_validation check (username ~* '^[A-Za-z0-9_]{3,24}$')
 );
-comment on table public.profiles is 'Holds all of users profile information';
+comment on table public.profiles is 'ユーザー名などのユーザー情報を保持する';
 
 create table if not exists public.messages (
     id uuid not null primary key default uuid_generate_v4(),
@@ -45,7 +45,7 @@ create table if not exists public.messages (
     content varchar(500) not null,
     created_at timestamp with time zone default timezone('utc' :: text, now()) not null
 );
-comment on table public.messages is 'Holds individual messages sent on the app.';
+comment on table public.messages is 'アプリ内で送られたチャットを保持する';
 ```
 
 実行が完了したらテーブルエディターに行って実際に作成されたテーブルを確認してみましょう。空のテーブルが二つ作成されているはずです。

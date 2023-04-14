@@ -2,7 +2,7 @@
 title: "Flutter create & Flutter と Supabase の紐付け・準備"
 ---
 
-### 空のFlutterアプリを作成
+## 空のFlutterアプリを作成
 
 まず最初に空のFlutterアプリを作りましょう。
 
@@ -21,7 +21,7 @@ flutter run
 
 Flutterがデフォルトで用意しているカウンターアプリが立ち上がっているかと思います。一旦ここまで来たら、普段使っているコードエディターを開いてコーディングに入りましょう！
 
-### パッケージのインストール
+## パッケージのインストール
 
 pubspec.yamlを開いて以下のパッケージを追加しましょう！
 
@@ -33,7 +33,7 @@ timeago: ^3.1.0
 
 `flutter pub get`を実行してパッケージのインストールを完了させましょう。先ほどローカルでFlutterのアプリを実行していましたが、そちらも一度閉じて再実行する必要があります。
 
-### Supabaseとの紐付け
+## Supabaseとの紐付け
 
 Supabaseを使うにはmain関数で[initialize](https://supabase.com/docs/reference/dart/initializing#flutter-initialize)してあげる必要があります。
 `main.dart`を編集してSupabaseをinitializeしてあげましょう。
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'My Chat App',
+      title: 'チャットアプリ',
       home: // TODO: 後ほど初期ページに変更
     );
   }
