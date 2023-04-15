@@ -5,7 +5,7 @@ summary:
   Supabase と連携して、ユーザー連携や Flutter へのチャット連携などを解説していきます。
 
 topics: ["flutter", "supabase"] # 5 つまで
-published: false # 下書きは false
+published: true
 price: 0
 chapters:
   - page1
