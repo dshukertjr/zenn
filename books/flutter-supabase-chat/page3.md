@@ -36,8 +36,6 @@ supabase_flutter: ^1.0.0
 
 `flutter pub get`を実行してパッケージのインストールを完了させましょう。先ほどローカルでFlutterのアプリを実行していましたが、そちらも一度閉じて再実行する必要があります。
 
-![アプリのディレクトリー構造]()
-
 ## Supabaseとの紐付け
 
 Supabaseを使うにはmain関数で[initialize](https://supabase.com/docs/reference/dart/initializing#flutter-initialize)してあげる必要があります。
