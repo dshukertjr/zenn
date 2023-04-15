@@ -9,7 +9,7 @@ title: "Flutter create & Flutter と Supabase の紐付け・準備"
 ターミナルから以下のコマンドを打ってください。
 
 ```bash
-flutter create my_chat_app
+flutter create --platforms=web,ios,android my_chat_app
 ```
 
 それが終わったら下記コマンドで実行してみましょう。エミュレーターでもWeb上でも大丈夫です。
@@ -28,7 +28,7 @@ pubspec.yamlを開いて以下のパッケージを追加しましょう！
 ```yaml
 supabase_flutter: ^1.0.0
 ```
-`supabase_flutter`はSupabase上でログインしたり、データの読み書きをしたりする際に使います。`timeago`は`DateTime`型の値を渡すと自動的に現在時刻と比較して「1d」みたいにどれくらい前に投稿されたかのテキストを出してくれます。これはチャットの送信時刻を表示するところで使います。
+`supabase_flutter`はSupabase上でログインしたり、データの読み書きをしたりする際に使います。
 
 `flutter pub get`を実行してパッケージのインストールを完了させましょう。先ほどローカルでFlutterのアプリを実行していましたが、そちらも一度閉じて再実行する必要があります。
 
@@ -38,10 +38,6 @@ supabase_flutter: ^1.0.0
 
 Supabaseを使うにはmain関数で[initialize](https://supabase.com/docs/reference/dart/initializing#flutter-initialize)してあげる必要があります。
 `main.dart`を編集してSupabaseをinitializeしてあげましょう。
-
-SupabaseをinitializeするときにSupabase URLとSupabase Anon Keyが必要になるのですが、これらはSupabaseダッシュボードのsettings -> APIから探すことができます。これらの情報は外部に漏れても全く問題ないものなのでそのままGitにコミットしてしまっても大丈夫です！
-
-![SupabaseのAPI関連情報の探し場所](/images/flutter-supabase-chat/supabase-credentials.png)
 
 ```dart:lib/main.dart
 import 'package:flutter/material.dart';
@@ -71,6 +67,10 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+ここでSupabase URLとSupabase Anon Keyが必要になるのですが、これらはSupabaseダッシュボードの`settings -> API`から探すことができます。これらの情報は外部に漏れても全く問題ないものなのでそのままGitにコミットしてしまっても大丈夫です！
+
+![SupabaseのAPI関連情報の探し場所](/images/flutter-supabase-chat/supabase-credentials.png)
 
 ついでに最後にアプリの要所要所で使う細かな便利な変数や関数を定義したconstantsファイルを作りましょう。
 
@@ -109,7 +109,10 @@ extension ShowSnackBar on BuildContext {
 
   /// エラーが起きた際のSnackbarを表示
   void showErrorSnackBar({required String message}) {
-    showSnackBar(message: message, backgroundColor: Colors.red);
+    showSnackBar(
+      message: message,
+      backgroundColor: Theme.of(this).colorScheme.error,
+    );
   }
 }
 ```

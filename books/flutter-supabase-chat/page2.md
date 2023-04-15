@@ -52,11 +52,8 @@ comment on table public.messages is 'アプリ内で送られたチャットを�
 
 ![テーブルエディターでテーブルを確認](https://supabase.com/images/blog/flutter-chat/table-editor.png)
 
-Supabaseにはリアルタイムにデータを引っ張ってくる機能があるのですが、デフォルトでこちらの機能はオフになっており、テーブル単位でオンにしてあげる必要があります。こちらのSQLを同じようにSQLエディターから実行して、messagesテーブルからリアルタイムにデータを引っ張って来れるようにしましょう。
+Supabaseにはリアルタイムにデータを引っ張ってくる機能があるのですが、デフォルトでこちらの機能はオフになっており、テーブル単位でオンにしてあげる必要があります。ダッシュボードから`messages`テーブルのリアルタイム機能をオンにしてあげましょう。
 
-```sql
--- *** Add tables to the publication to enable real time subscription ***
-alter publication supabase_realtime add table public.messages;
-```
+![リアルタイム機能をオンにする](/images//flutter-supabase-chat/turn-on-realtime.png)
 
 ここまできたら今度はFlutter側の作業に入っていきます！

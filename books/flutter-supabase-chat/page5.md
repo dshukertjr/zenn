@@ -2,7 +2,7 @@
 title: "チャットのロジック"
 ---
 
-## モデルの定義
+## メッセージモデルの定義
 
 チャットページの作成に入る前に下準備です。アプリ内でチャットデータを扱う際に型を効かせられるようにモデルを定義しましょう。ここでは`messages`テーブル用のモデルを作ります。その際に`fromMap`コンストラクターを作って簡単にSupabaseから帰ってきたデータからインスタンスを作れるようにします。
 
@@ -45,7 +45,7 @@ class Message {
 
 ## チャットページの作成
 
-いよいよ最後のページ、メインのチャットページを作成しましょう。このページはリアルタイムにメッセージがロードされ、さらに誰でも他の人に向けてメッセージを送信することができるページになります。ここではsupabase-flutterの[stream()](https://supabase.com/docs/reference/dart/stream)メソッドを使ってメッセージテーブルからデータをロードしてきています。
+いよいよメインのチャットページの作成に入ります。このページはリアルタイムにメッセージがロードされ、さらに誰でも他の人に向けてメッセージを送信することができるページになります。ここではsupabase-flutterの[stream()](https://supabase.com/docs/reference/dart/stream)メソッドを使ってメッセージテーブルからデータをロードしてきています。
 
 ```dart:lib/pages/chat_page.dart
 import 'dart:async';
@@ -53,10 +53,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:my_chat_app/models/message.dart';
-import 'package:my_chat_app/models/profile.dart';
 import 'package:my_chat_app/utils/constants.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:timeago/timeago.dart';
 
 /// 他のユーザーとチャットができるページ
 ///
@@ -78,9 +75,6 @@ class _ChatPageState extends State<ChatPage> {
   /// メッセージをロードするためのストリーム
   late final Stream<List<Message>> _messagesStream;
 
-  /// プロフィール情報をメモリー内にキャッシュしておくための変数
-  final Map<String, Profile> _profileCache = {};
-
   @override
   void initState() {
     final myUserId = supabase.auth.currentUser!.id;
@@ -97,7 +91,22 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('チャット')),
+      appBar: AppBar(
+        title: const Text('チャット'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              supabase.auth.signOut();
+              Navigator.of(context)
+                  .pushAndRemoveUntil(RegisterPage.route(), (route) => false);
+            },
+            child: Text(
+              'ログアウト',
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+          )
+        ],
+      ),
       body: StreamBuilder<List<Message>>(
         stream: _messagesStream,
         builder: (context, snapshot) {
@@ -133,13 +142,15 @@ class _ChatPageState extends State<ChatPage> {
 }
 ```
 
-ここまできたらぜひ一度動きを確認しましょう。今回はmain.dartを上書きして`ChatPage`を強制的に表示させるのではなく、きちんとログインしている場合に`ChatPage`が表示されるようにします。
+ここまできたらぜひ一度動きを確認しましょう。今回はmain.dartを上書きして`ChatPage`を強制的に表示させるのではなく、きちんと場合分けをし、アプリを開いた際にログイン済みの場合に`ChatPage`が表示され、ログインしていない場合は`RegisterPage`が表示されるようにしましょう。
 
-### Step 3: ユーザーのログイン状態に応じてSplashPageからリダイレクトする
+### SplashPageでリダイレクト
 
 ユーザーがアプリを立ち上げたときにそのユーザーがログインしているかどうかに応じて適切なページにリダイレクトしてあげましょう。これをするにはSplashPageというページを作り、その中でログイン状態を判別し適切なページにリダイレクトしてあげます。UIはただ単に真ん中でローダーがくるくる回っているだけのものになります。
 
 ```dart:lib/pages/splash_page.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/pages/chat_page.dart';
 import 'package:my_chat_app/pages/register_page.dart';
@@ -190,7 +201,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'チャットアプリ',
       home: SplashPage(),
@@ -199,18 +210,21 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-ここまで作れたらまた一度挙動を確認してみましょう。
+ここまで作れたらまた一度挙動を確認してみましょう。アプリを一度Refreshしてみてください。うまくいけばチャット画面が表示されるはずです。
 
-![チャットがまだ入力されていないチャット画面]()
+![チャットがまだ入力されていないチャット画面](/images/flutter-supabase-chat/empty-chat-page.png)
 
 また、実際にチャットが表示されるかを確認するために、Supabaseのダッシュボードから手動でメッセージを作成してみます。ダッシュボードの`Table Editor -> messages`でメッセージテーブルを開き、Insertボタンから新しくrowを追加します。
 
-![Supabaseのダッシュボードとチャット画面]()
+![Supabaseのダッシュボードとチャット画面](/images/flutter-supabase-chat/add-a-row.png)
+
+## チャットの送信
 
 データベースのメッセージ情報がアプリの方に正しく同期されていることが確認できたところでアプリにもチャットの送信ロジックを実装していきましょう。
 チャットページの下の方にこちらのテキストボックスと送信ボタンのセットのウィジェットを追加します。
 
 ```dart:lib/pages/chat_page.dart
+...
 /// チャット入力用のテキストフィールドと送信ボタンを持つウィジェット
 class _MessageBar extends StatefulWidget {
   const _MessageBar({
@@ -222,7 +236,7 @@ class _MessageBar extends StatefulWidget {
 }
 
 class _MessageBarState extends State<_MessageBar> {
-  late final TextEditingController _textController = TextEditingController();;
+  late final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -317,4 +331,6 @@ return Column(
 
 これでアプリ内からもチャットを送信することができるようになったはずです！
 
-![アプリからチャットを送信]()
+![アプリからチャットを送信](/images/flutter-supabase-chat/chat-page-with-form.png)
+
+いい感じにチャットが機能していることが確認できました！このままでは見た目が少し寂しいので、次のページでは少しデザインを整えてあげましょう。
