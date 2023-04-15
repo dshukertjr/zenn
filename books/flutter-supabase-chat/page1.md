@@ -17,8 +17,15 @@ Supabaseを知らない方のために一応説明しておくと、Supabaseと�
 
 流れとしては、まず登録・ログイン機能を実装して、その後にチャット周りのロジック作成。最後にUIを整えて完成となります！
 
+## 開発環境
+
+今回のアプリを作る上で僕の手元ではFlutter v3.7.7を使って作りました。Flutter３以上であればおそらく問題なく動くかと思うのですが、もし動かない場合はFlutterのバージョンを合わせてみてください。
+
+また、こちらのアプリはiOS, Android, Webで動かすことを前提に作られています。
+
 ## 参照リポジトリ
 
 こちらの本の中で作っていくアプリのソースコードはこちらになります。
 
 [github.com/flutter-osaka-dev/flutter-chat](https://github.com/flutter-osaka-dev/flutter-chat)
+
