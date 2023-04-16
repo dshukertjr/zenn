@@ -54,6 +54,6 @@ comment on table public.messages is 'アプリ内で送られたチャットを�
 
 Supabaseにはリアルタイムにデータを引っ張ってくる機能があるのですが、デフォルトでこちらの機能はオフになっており、テーブル単位でオンにしてあげる必要があります。ダッシュボードから`messages`テーブルのリアルタイム機能をオンにしてあげましょう。
 
-![リアルタイム機能をオンにする](/images//flutter-supabase-chat/turn-on-realtime.png)
+![リアルタイム機能をオンにする](/images/flutter-supabase-chat/turn-on-realtime.png)
 
 ここまできたら今度はFlutter側の作業に入っていきます！
