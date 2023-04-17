@@ -333,4 +333,43 @@ return Column(
 
 ![アプリからチャットを送信](/images/flutter-supabase-chat/chat-page-with-form.png)
 
-いい感じにチャットが機能していることが確認できました！このままでは見た目が少し寂しいので、次のページでは少しデザインを整えてあげましょう。
+いい感じにチャットが機能していることが確認できました！
+
+## RLSを使ってアプリをセキュアにする
+
+これでも問題なくチャットとして機能するのですが、今の状態だと実はAPIに特に何のアクセス制限もかけていない状態で、誰でも好きにデータの改ざんができてしまう状態です。なので、SupabaseのRow Level Security (行レベルセキュリティ)、略してRLSを使ってアプリをセキュアにしてあげましょう。
+
+RLSとはテーブルごとに設定できる「誰がCRUDのどのアクションを実行する権限があるか」を設定する機能です。これが設定されていないと、少しSupabaseの知識がある人であれば簡単に他のユーザーになりすましてチャットを投稿したり、データの全削除なんかもできたりします。
+
+設定方法は簡単！まず`Authentication -> Policies`のページに移動します。ここでは今アプリで設定されているRLSを閲覧することができます。
+
+![RLSが設定されていない](/images/flutter-supabase-chat/no-rls.png)
+
+今はそもそもRLSが有効化されていない状態なので、まず`messages`と`profiles`テーブル両方の`Enable RLS`ボタンを押してRLSを有効化してあげましょう。
+
+RLSが有効化されるとデフォルトで`Select`, `Insert`, `Update`, `Delete`全てのアクセスを弾きます。そこから、`true`か`false`を返すSQLを含んだポリシー定義してあげて特定のアクションを許可するか拒否するかを決めることができます。
+
+まずは`messages`テーブルの`Insert`ポリシーを設定していきましょう。ここでは他のユーザーへのなりすまし投稿を防ぐようなポリシーを設定します。一番下の`With Check Expression`の箇所に、特定の行ごとに`true`か`false`になるようなSQLの`where`文にあたる部分を書き、その行が`true`の時に`Insert`が許可され、`false`の時に`Insert`が拒否されるようになります。
+
+今回は`With Check Expression`の箇所に`auth.uid() = profile_id`と記述します。
+
+![メッセージテーブルのInsertポリシー](/images/flutter-supabase-chat/messages-insert-policy.png)
+
+ここで出てくる`auth.uid()`はSupabaseが用意してくれている関数で、アクセスしようとしてきたユーザーのIDを返してくれます。今回のポリシーではそのユーザーのIDと、実際に挿入しようとしているprofile_idの値を比較して、一致していれば`Insert`を許可するようにしています。これで他人になりすましてチャットデータの挿入を防ぐことができました。
+
+では続いて`Select`ポリシーを設定しましょう。`messages`テーブルは特に制限なく誰でも閲覧できる形になっているので、`Using Expression`のところに`true`と入力してあげます。これで誰でもメッセージを閲覧することができるようになりました。
+
+![メッセージテーブルのSelectポリシー](/images/flutter-supabase-chat/messages-select-policy.png)
+
+ここで注意深い方は気づいたかもしれませんが、`Insert`の時は`With Check Expression`を設定し、`Select`の時は`Using Expression`を設定しましたね。`With Check`というのは新しく挿入・上書きしようとしているデータに対してチェックを行うときに使うもので、`Using`は既存のデータに対してチェックを行うときに使うものです。今回の例では特に`Update`のポリシーは書きませんが、`Update`のポリシーを設定するときは`With Check`と`Using`の両方を使います。
+
+さて、続いて`profiles`テーブルのポリシー設定に進みましょう。
+
+`profiles`テーブルは挿入に関してはユーザー登録時にSupabaseのトリガーを使って自動的に行ってくれるので特にPolicyを設定する必要はありません。なので今回は全ユーザーが自由に他のユーザーのプロフィールを閲覧できるようなポリシーを設定してあげます。
+
+![プロフィールのSelectポリシー](/images/flutter-supabase-chat/profiles-select-policy.png)
+
+以上でRLSの設定は完了です。たったこれだけのステップで不正アクセスされないセキュアなアプリができました。
+
+次のページでは、このままではアプリの見た目が少し寂しいので、少しデザインを整えてあげましょう。
+
