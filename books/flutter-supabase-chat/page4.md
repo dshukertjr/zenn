@@ -6,7 +6,7 @@ title: "登録・ログインページ"
 
 一通り下準備が整ったのでページの作成に入っていきましょう！まずは登録ページに取り掛かります。今回はシンプルにメールアドレスとパスワード、そしてユーザーネームを設定して登録する形にしましょう。ユーザー名はアプリ内でそのユーザーのアイコンとして表示されます。
 
-```dart:lib/pages/register.dart
+```dart:lib/pages/register_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_chat_app/utils/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
