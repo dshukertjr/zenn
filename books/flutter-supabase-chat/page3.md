@@ -20,6 +20,9 @@ flutter run
 ```
 
 Flutterがデフォルトで用意しているカウンターアプリが立ち上がっているかと思います。一旦ここまで来たら、普段使っているコードエディターを開いてコーディングに入りましょう！
+その際、Android Studioで開く場合はデフォルトだとAndroid Projectとして立ち上がるので、左上の箇所からProjectに切り替えてあげましょう。
+
+![Android Studioで開く際の注意点](/images/flutter-supabase-chat/android-studio.png)
 
 参考までに今回は最終的にこんな感じのディレクトリー構成になる形になっています。
 
