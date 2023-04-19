@@ -351,6 +351,10 @@ RLSが有効化されるとデフォルトで`Select`, `Insert`, `Update`, `Dele
 
 まずは`messages`テーブルの`Insert`ポリシーを設定していきましょう。ここでは他のユーザーへのなりすまし投稿を防ぐようなポリシーを設定します。一番下の`With Check Expression`の箇所に、特定の行ごとに`true`か`false`になるようなSQLの`where`文にあたる部分を書き、その行が`true`の時に`Insert`が許可され、`false`の時に`Insert`が拒否されるようになります。
 
+`New Policy`ボタンから`For full customization`を選択してポリシーを作成します。
+
+![RLSをかく](/images/flutter-supabase-chat/rls-customization.png)
+
 今回は`With Check Expression`の箇所に`auth.uid() = profile_id`と記述します。
 
 ![メッセージテーブルのInsertポリシー](/images/flutter-supabase-chat/messages-insert-policy.png)

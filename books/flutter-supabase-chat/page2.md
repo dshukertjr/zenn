@@ -12,6 +12,8 @@ Githubアカウントでログインすることを促されるので緑のボ�
 
 このボタンを押したあとプロジェクト名などを設定します。プロジェクト名はとりあえず「chat」とでも呼んでおきましょう。Detabaseのパスワードに関しては特に今回は使いませんし、後々何かで必要になっても上書きはできるので`Generate a password`ボタンを押してランダムでセキュアなパスワードを自動生成しちゃいましょう。Pricing planはデフォルトの無料版でOKです。ここまで済んだら「Create new Project」ボタンを押しましょう。Supabaseが裏側で新しいプロジェクトを１、2分ほどでセットアップしてくれます。
 
+![プロジェクトの作成](/images/flutter-supabase-chat/create-a-project.png)
+
 プロジェクトのセットアップが完了したら実際に設定に入っていきましょう！
 
 ## Supabase内でテーブルの作成
@@ -26,7 +28,7 @@ Githubアカウントでログインすることを促されるので緑のボ�
 
 こちらのSQLをSupabaseダッシュボード内のSQLエディターから実行しましょう。
 
-![SQLエディター](https://supabase.com/images/blog/flutter-chat/sql-editor.png)
+![SQLエディター](/images/flutter-supabase-chat/sql-editor.png)
 
 ```sql
 create table if not exists public.profiles (
@@ -48,12 +50,18 @@ create table if not exists public.messages (
 comment on table public.messages is 'アプリ内で送られたチャットを保持する';
 ```
 
-実行が完了したらテーブルエディターに行って実際に作成されたテーブルを確認してみましょう。空のテーブルが二つ作成されているはずです。
+実行が完了したらテーブルエディターに行って実際に作成されたテーブルを確認してみましょう。空のテーブルが二つ作成されているはずです。この際画面上部に黄色い警告が出ていますが、こちらはのちに設定するセキュリティ関係の設定を行うと消えるので一旦無視しておきましょう。
 
-![テーブルエディターでテーブルを確認](https://supabase.com/images/blog/flutter-chat/table-editor.png)
+![テーブルエディターでテーブルを確認](/images/flutter-supabase-chat/table-editor.png)
 
 Supabaseにはリアルタイムにデータを引っ張ってくる機能があるのですが、デフォルトでこちらの機能はオフになっており、テーブル単位でオンにしてあげる必要があります。ダッシュボードから`messages`テーブルのリアルタイム機能をオンにしてあげましょう。
 
+`Database -> Replication`から`0 tables`と書かれているボタンを押し、
+
 ![リアルタイム機能をオンにする](/images/flutter-supabase-chat/turn-on-realtime.png)
+
+`messages`テーブルをオンにしてあげましょう。これで`messages`テーブルからリアルタイムにデータを取得することができるようになりました。`profiles`テーブルに関しては、特にリアルタイムデータを取得する必要がないのでそのままでOKです。
+
+![メッセージテーブルのリアルタイム機能をオンにする](/images/flutter-supabase-chat/turn-on-messages-realtime.png)
 
 ここまできたら今度はFlutter側の作業に入っていきます！

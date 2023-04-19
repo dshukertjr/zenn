@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'チャットアプリ',
-      home: // TODO: 後ほど初期ページに変更
+      home: Scaffold(), // TODO: 後ほど初期ページに変更
     );
   }
 }
